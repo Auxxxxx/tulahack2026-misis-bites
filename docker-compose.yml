@@ -23,6 +23,8 @@ services:
     container_name: tulahack-app
     ports:
       - "8080:8080"
+    env_file:
+      - backend/.env
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tulahack
       SPRING_DATASOURCE_USERNAME: postgres
