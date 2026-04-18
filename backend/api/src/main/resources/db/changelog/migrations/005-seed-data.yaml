@@ -1,0 +1,195 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-seed-teams
+      author: developer
+      changes:
+        - insert:
+            tableName: teams
+            columns:
+              - column: { name: name, value: "TechVision" }
+              - column: { name: member_limit, valueNumeric: "5" }
+        - insert:
+            tableName: teams
+            columns:
+              - column: { name: name, value: "CodeMasters" }
+              - column: { name: member_limit, valueNumeric: "4" }
+        - insert:
+            tableName: teams
+            columns:
+              - column: { name: name, value: "DataDriven" }
+              - column: { name: member_limit, valueNumeric: "6" }
+        - insert:
+            tableName: teams
+            columns:
+              - column: { name: name, value: "AI Innovators" }
+              - column: { name: member_limit, valueNumeric: "5" }
+
+  - changeSet:
+      id: 006-seed-team-open-roles
+      author: developer
+      changes:
+        - insert:
+            tableName: team_open_roles
+            columns:
+              - column: { name: team_id, valueNumeric: "1" }
+              - column: { name: role, value: "Backend Developer" }
+        - insert:
+            tableName: team_open_roles
+            columns:
+              - column: { name: team_id, valueNumeric: "1" }
+              - column: { name: role, value: "Frontend Developer" }
+        - insert:
+            tableName: team_open_roles
+            columns:
+              - column: { name: team_id, valueNumeric: "2" }
+              - column: { name: role, value: "DevOps Engineer" }
+        - insert:
+            tableName: team_open_roles
+            columns:
+              - column: { name: team_id, valueNumeric: "3" }
+              - column: { name: role, value: "Data Scientist" }
+        - insert:
+            tableName: team_open_roles
+            columns:
+              - column: { name: team_id, valueNumeric: "4" }
+              - column: { name: role, value: "ML Engineer" }
+
+  - changeSet:
+      id: 007-seed-team-members
+      author: developer
+      changes:
+        - insert:
+            tableName: team_members
+            columns:
+              - column: { name: team_id, valueNumeric: "1" }
+              - column: { name: full_name, value: "Иванов Алексей" }
+              - column: { name: role, value: "Team Lead" }
+              - column: { name: disc_d, valueNumeric: "8.5" }
+              - column: { name: disc_i, valueNumeric: "6.2" }
+              - column: { name: disc_s, valueNumeric: "7.1" }
+              - column: { name: disc_c, valueNumeric: "9.0" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "7.5" }
+              - column: { name: gerchikov_professional, valueNumeric: "8.2" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "6.8" }
+              - column: { name: gerchikov_master, valueNumeric: "7.9" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "3.2" }
+        - insert:
+            tableName: team_members
+            columns:
+              - column: { name: team_id, valueNumeric: "1" }
+              - column: { name: full_name, value: "Петрова Мария" }
+              - column: { name: role, value: "Backend Developer" }
+              - column: { name: disc_d, valueNumeric: "7.2" }
+              - column: { name: disc_i, valueNumeric: "8.5" }
+              - column: { name: disc_s, valueNumeric: "6.8" }
+              - column: { name: disc_c, valueNumeric: "7.5" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "6.9" }
+              - column: { name: gerchikov_professional, valueNumeric: "7.8" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "8.1" }
+              - column: { name: gerchikov_master, valueNumeric: "6.5" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "4.0" }
+        - insert:
+            tableName: team_members
+            columns:
+              - column: { name: team_id, valueNumeric: "2" }
+              - column: { name: full_name, value: "Смирнов Дмитрий" }
+              - column: { name: role, value: "Fullstack Developer" }
+              - column: { name: disc_d, valueNumeric: "9.1" }
+              - column: { name: disc_i, valueNumeric: "7.3" }
+              - column: { name: disc_s, valueNumeric: "5.9" }
+              - column: { name: disc_c, valueNumeric: "8.2" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "8.0" }
+              - column: { name: gerchikov_professional, valueNumeric: "9.1" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "7.2" }
+              - column: { name: gerchikov_master, valueNumeric: "8.5" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "2.8" }
+        - insert:
+            tableName: team_members
+            columns:
+              - column: { name: team_id, valueNumeric: "3" }
+              - column: { name: full_name, value: "Козлова Елена" }
+              - column: { name: role, value: "Data Analyst" }
+              - column: { name: disc_d, valueNumeric: "6.8" }
+              - column: { name: disc_i, valueNumeric: "7.9" }
+              - column: { name: disc_s, valueNumeric: "8.2" }
+              - column: { name: disc_c, valueNumeric: "9.3" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "7.2" }
+              - column: { name: gerchikov_professional, valueNumeric: "8.5" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "6.5" }
+              - column: { name: gerchikov_master, valueNumeric: "7.1" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "3.5" }
+
+  - changeSet:
+      id: 008-seed-candidates
+      author: developer
+      changes:
+        - insert:
+            tableName: candidates
+            columns:
+              - column: { name: full_name, value: "Николаев Сергей" }
+              - column: { name: role, value: "Backend Developer" }
+              - column: { name: disc_d, valueNumeric: "7.5" }
+              - column: { name: disc_i, valueNumeric: "6.8" }
+              - column: { name: disc_s, valueNumeric: "7.2" }
+              - column: { name: disc_c, valueNumeric: "8.1" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "7.8" }
+              - column: { name: gerchikov_professional, valueNumeric: "8.3" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "7.0" }
+              - column: { name: gerchikov_master, valueNumeric: "7.5" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "3.8" }
+        - insert:
+            tableName: candidates
+            columns:
+              - column: { name: full_name, value: "Федорова Анна" }
+              - column: { name: role, value: "Frontend Developer" }
+              - column: { name: disc_d, valueNumeric: "6.9" }
+              - column: { name: disc_i, valueNumeric: "8.7" }
+              - column: { name: disc_s, valueNumeric: "7.5" }
+              - column: { name: disc_c, valueNumeric: "7.0" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "6.5" }
+              - column: { name: gerchikov_professional, valueNumeric: "7.2" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "8.0" }
+              - column: { name: gerchikov_master, valueNumeric: "6.8" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "4.2" }
+        - insert:
+            tableName: candidates
+            columns:
+              - column: { name: full_name, value: "Морозов Павел" }
+              - column: { name: role, value: "DevOps Engineer" }
+              - column: { name: disc_d, valueNumeric: "8.8" }
+              - column: { name: disc_i, valueNumeric: "6.5" }
+              - column: { name: disc_s, valueNumeric: "6.2" }
+              - column: { name: disc_c, valueNumeric: "8.9" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "8.2" }
+              - column: { name: gerchikov_professional, valueNumeric: "9.0" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "6.8" }
+              - column: { name: gerchikov_master, valueNumeric: "8.3" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "2.5" }
+        - insert:
+            tableName: candidates
+            columns:
+              - column: { name: full_name, value: "Волкова Екатерина" }
+              - column: { name: role, value: "QA Engineer" }
+              - column: { name: disc_d, valueNumeric: "7.0" }
+              - column: { name: disc_i, valueNumeric: "7.5" }
+              - column: { name: disc_s, valueNumeric: "8.5" }
+              - column: { name: disc_c, valueNumeric: "9.2" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "7.0" }
+              - column: { name: gerchikov_professional, valueNumeric: "8.0" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "7.5" }
+              - column: { name: gerchikov_master, valueNumeric: "6.9" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "3.9" }
+        - insert:
+            tableName: candidates
+            columns:
+              - column: { name: full_name, value: "Лебедев Максим" }
+              - column: { name: role, value: "ML Engineer" }
+              - column: { name: disc_d, valueNumeric: "8.2" }
+              - column: { name: disc_i, valueNumeric: "7.8" }
+              - column: { name: disc_s, valueNumeric: "6.5" }
+              - column: { name: disc_c, valueNumeric: "8.7" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "8.5" }
+              - column: { name: gerchikov_professional, valueNumeric: "9.2" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "7.3" }
+              - column: { name: gerchikov_master, valueNumeric: "8.8" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "2.9" }
