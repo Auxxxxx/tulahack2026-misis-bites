@@ -18,6 +18,7 @@ import java.util.List;
 @RequestMapping("/teams")
 @RequiredArgsConstructor
 @Tag(name = "Teams", description = "API для управления командами")
+@CrossOrigin(origins = "*")
 public class TeamController {
 
     private final TeamService teamService;
