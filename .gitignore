@@ -8,6 +8,9 @@ build/
 gradle-app.setting
 !gradle/wrapper/gradle-wrapper.jar
 
+# Environment
+.env
+
 # Spring Boot
 HELP.md
 .log

@@ -10,3 +10,4 @@ rootProject.name = "tulahack2026-misis-bites"
 
 include "api"
 include "compute"
+include "llm-api"

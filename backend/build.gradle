@@ -13,6 +13,7 @@ buildscript {
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
     
     java {
         sourceCompatibility = '17'
@@ -21,5 +22,11 @@ subprojects {
     repositories {
         maven { setUrl("https://nexus-new.tcsbank.ru/repository/gradle-plugins") }
         mavenCentral()
+    }
+    
+    dependencyManagement {
+        imports {
+            mavenBom 'org.springframework.boot:spring-boot-dependencies:3.4.0'
+        }
     }
 }
