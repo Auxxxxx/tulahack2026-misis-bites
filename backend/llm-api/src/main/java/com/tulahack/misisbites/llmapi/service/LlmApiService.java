@@ -83,39 +83,55 @@ public class LlmApiService {
     /**
      * Generate recommendation for a candidate based on team analytics.
      * Sends only the JSON data - system prompt is already configured in the agent.
-     * Retries indefinitely until successful response is received.
+     * Retries indefinitely on HTTP errors and parsing failures until valid response is received.
      */
     public RecommendationResponse generateRecommendation(RecommendationRequest request) {
+        String candidateJson;
         try {
-            String candidateJson = objectMapper.writeValueAsString(request);
-            
-            // Send only user message with data - system prompt is configured in the agent
-            ChatCompletionRequest chatRequest = new ChatCompletionRequest(
-                    properties.getModel(),
-                    List.of(new ChatCompletionRequest.Message("user", candidateJson))
-            );
-
-            // Retry indefinitely with exponential backoff
-            ChatCompletionResponse response = webClient.post()
-                    .uri("/" + properties.getAgentId() + "/v1/chat/completions")
-                    .bodyValue(chatRequest)
-                    .retrieve()
-                    .bodyToMono(ChatCompletionResponse.class)
-                    .retryWhen(Retry.backoff(Long.MAX_VALUE, Duration.ofSeconds(1))
-                            .maxBackoff(Duration.ofSeconds(30))
-                            .onRetryExhaustedThrow((spec, signal) -> signal.failure()))
-                    .block();
-            
-            if (response != null && response.getChoices() != null && !response.getChoices().isEmpty()) {
-                String content = response.getChoices().get(0).getMessage().getContent();
-                // Strip markdown code blocks if present
-                content = stripMarkdownCodeBlocks(content);
-                return objectMapper.readValue(content, RecommendationResponse.class);
-            }
-            
-            throw new RuntimeException("Empty response from LLM API");
+            candidateJson = objectMapper.writeValueAsString(request);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to process JSON: " + e.getMessage(), e);
+            throw new RuntimeException("Failed to serialize request to JSON: " + e.getMessage(), e);
+        }
+        
+        ChatCompletionRequest chatRequest = new ChatCompletionRequest(
+                properties.getModel(),
+                List.of(new ChatCompletionRequest.Message("user", candidateJson))
+        );
+        
+        int attempt = 0;
+        
+        while (true) {
+            try {
+                // Retry HTTP requests with exponential backoff
+                ChatCompletionResponse response = webClient.post()
+                        .uri("/" + properties.getAgentId() + "/v1/chat/completions")
+                        .bodyValue(chatRequest)
+                        .retrieve()
+                        .bodyToMono(ChatCompletionResponse.class)
+                        .retryWhen(Retry.backoff(Long.MAX_VALUE, Duration.ofSeconds(1))
+                                .maxBackoff(Duration.ofSeconds(30))
+                                .onRetryExhaustedThrow((spec, signal) -> signal.failure()))
+                        .block();
+                
+                if (response != null && response.getChoices() != null && !response.getChoices().isEmpty()) {
+                    String content = response.getChoices().get(0).getMessage().getContent();
+                    // Strip markdown code blocks if present
+                    content = stripMarkdownCodeBlocks(content);
+                    return objectMapper.readValue(content, RecommendationResponse.class);
+                }
+                
+                throw new RuntimeException("Empty response from LLM API");
+            } catch (JsonProcessingException e) {
+                attempt++;
+                // Wait before retry with exponential backoff
+                long delayMs = Duration.ofSeconds(1).multipliedBy(attempt).toMillis();
+                try {
+                    Thread.sleep(delayMs);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("Interrupted during retry wait", ie);
+                }
+            }
         }
     }
     
