@@ -8,6 +8,7 @@ import com.tulahack.misisbites.llmapi.dto.ChatCompletionResponse;
 import com.tulahack.misisbites.llmapi.dto.RecommendationRequest;
 import com.tulahack.misisbites.llmapi.dto.RecommendationResponse;
 import io.netty.handler.ssl.SslContext;
+import lombok.extern.slf4j.Slf4j;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.springframework.http.HttpHeaders;
@@ -20,19 +21,27 @@ import reactor.netty.http.client.HttpClient;
 import reactor.util.retry.Retry;
 
 import javax.net.ssl.SSLException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
+import java.util.HexFormat;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @Service
 public class LlmApiService {
 
     private final WebClient webClient;
     private final LlmApiProperties properties;
     private final ObjectMapper objectMapper;
+    private final ConcurrentHashMap<String, RecommendationResponse> cache;
 
     public LlmApiService(LlmApiProperties properties, ObjectMapper objectMapper) throws SSLException {
         this.properties = properties;
         this.objectMapper = objectMapper;
+        this.cache = new ConcurrentHashMap<>();
         
         // Create HttpClient that trusts all certificates
         HttpClient httpClient = createInsecureHttpClient();
@@ -84,8 +93,19 @@ public class LlmApiService {
      * Generate recommendation for a candidate based on team analytics.
      * Sends only the JSON data - system prompt is already configured in the agent.
      * Retries indefinitely on HTTP errors and parsing failures until valid response is received.
+     * Uses caching to avoid duplicate API calls for the same request.
      */
     public RecommendationResponse generateRecommendation(RecommendationRequest request) {
+        // Generate cache key from request
+        String cacheKey = generateCacheKey(request);
+        
+        // Check cache first
+        RecommendationResponse cachedResponse = cache.get(cacheKey);
+        if (cachedResponse != null) {
+            log.debug("Cache hit for request key: {}", cacheKey);
+            return cachedResponse;
+        }
+        
         String candidateJson;
         try {
             candidateJson = objectMapper.writeValueAsString(request);
@@ -117,7 +137,11 @@ public class LlmApiService {
                     String content = response.getChoices().get(0).getMessage().getContent();
                     // Strip markdown code blocks if present
                     content = stripMarkdownCodeBlocks(content);
-                    return objectMapper.readValue(content, RecommendationResponse.class);
+                    RecommendationResponse recommendationResponse = objectMapper.readValue(content, RecommendationResponse.class);
+                    // Cache the successful response
+                    cache.put(cacheKey, recommendationResponse);
+                    log.debug("Cached recommendation for key: {}", cacheKey);
+                    return recommendationResponse;
                 }
                 
                 throw new RuntimeException("Empty response from LLM API");
@@ -132,6 +156,22 @@ public class LlmApiService {
                     throw new RuntimeException("Interrupted during retry wait", ie);
                 }
             }
+        }
+    }
+    
+    /**
+     * Generates a cache key based on the request content.
+     * Uses SHA-256 hash of the serialized request to create a unique key.
+     */
+    private String generateCacheKey(RecommendationRequest request) {
+        try {
+            String json = objectMapper.writeValueAsString(request);
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = digest.digest(json.getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(hashBytes);
+        } catch (JsonProcessingException | NoSuchAlgorithmException e) {
+            // Fallback to identity-based key if hashing fails
+            return String.valueOf(System.identityHashCode(request));
         }
     }
     
