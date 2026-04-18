@@ -1,0 +1,70 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-create-candidates-table
+      author: developer
+      changes:
+        - createTable:
+            tableName: candidates
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: full_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: disc_d
+                  type: double precision
+                  constraints:
+                    nullable: false
+              - column:
+                  name: disc_i
+                  type: double precision
+                  constraints:
+                    nullable: false
+              - column:
+                  name: disc_s
+                  type: double precision
+                  constraints:
+                    nullable: false
+              - column:
+                  name: disc_c
+                  type: double precision
+                  constraints:
+                    nullable: false
+              - column:
+                  name: gerchikov_instrumental
+                  type: double precision
+                  constraints:
+                    nullable: false
+              - column:
+                  name: gerchikov_professional
+                  type: double precision
+                  constraints:
+                    nullable: false
+              - column:
+                  name: gerchikov_patriotic
+                  type: double precision
+                  constraints:
+                    nullable: false
+              - column:
+                  name: gerchikov_master
+                  type: double precision
+                  constraints:
+                    nullable: false
+              - column:
+                  name: gerchikov_avoiding
+                  type: double precision
+                  constraints:
+                    nullable: false

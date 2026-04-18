@@ -1,0 +1,12 @@
+pluginManagement {
+    repositories {
+        maven { setUrl("https://nexus-new.tcsbank.ru/repository/gradle-plugins") }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = "tulahack2026-misis-bites"
+
+include "api"
+include "compute"

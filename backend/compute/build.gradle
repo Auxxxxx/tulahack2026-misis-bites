@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+    id 'java-library'
+}
+
+java {
+    sourceCompatibility = '17'
+}
+
+dependencies {
+    // No external dependencies needed for pure computation logic
+}
+
+jar {
+    enabled = true
+}

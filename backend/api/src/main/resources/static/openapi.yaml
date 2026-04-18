@@ -1,0 +1,473 @@
+openapi: 3.0.3
+info:
+  title: Teams API
+  description: API для управления командами, участниками и подбором кандидатов с анализом совместимости
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Локальный сервер
+
+components:
+  schemas:
+    TeamAnalytics:
+      type: object
+      title: Аналитика команды
+      description: Средние показатели и сводные метрики команды
+      required:
+        - avgDISC
+        - avgGerchikov
+        - compatibilityDiscPercent
+        - compatibilityGerchikovPercent
+        - totalCompatibilityPercent
+      properties:
+        avgDISC:
+          type: object
+          description: Средние значения DISC-показателей участников команды
+          required: [D, I, S, C]
+          properties:
+            D:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+              example: 0.65
+            I:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+              example: 0.45
+            S:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+              example: 0.5
+            C:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+              example: 0.7
+        avgGerchikov:
+          type: object
+          description: Средние значения по методике Герчикова
+          required: [INSTRUMENTAL, PROFESSIONAL, PATRIOTIC, MASTER, AVOIDING]
+          properties:
+            INSTRUMENTAL:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+              example: 0.6
+            PROFESSIONAL:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+              example: 0.75
+            PATRIOTIC:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+              example: 0.4
+            MASTER:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+              example: 0.68
+            AVOIDING:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+              example: 0.25
+        compatibilityDiscPercent:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 78
+          description: Процент совместимости участников по характеру (DISC)
+        compatibilityGerchikovPercent:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 82
+          description: Процент совместимости по мотивации (Герчиков)
+        totalCompatibilityPercent:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 80
+          description: Общий процент совместимости команды
+
+    MemberAnalytics:
+      type: object
+      title: Аналитика участника
+      description: Полные метрики и совместимость участника с командой
+      required:
+        - DISC_D
+        - DISC_I
+        - DISC_S
+        - DISC_C
+        - GERCHIKOV_INSTRUMENTAL
+        - GERCHIKOV_PROFESSIONAL
+        - GERCHIKOV_PATRIOTIC
+        - GERCHIKOV_MASTER
+        - GERCHIKOV_AVOIDING
+        - compatibilityDiscPercent
+        - compatibilityGerchikovPercent
+        - totalCompatibilityPercent
+      properties:
+        DISC_D:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.7
+          description: Личное значение D (Dominance) по методике DISC
+        DISC_I:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.5
+          description: Личное значение I (Influence)
+        DISC_S:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.3
+          description: Личное значение S (Steadiness)
+        DISC_C:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.9
+          description: Личное значение C (Compliance)
+        GERCHIKOV_INSTRUMENTAL:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.6
+          description: Инструментальная направленность
+        GERCHIKOV_PROFESSIONAL:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.8
+          description: Профессиональное самосознание
+        GERCHIKOV_PATRIOTIC:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.4
+          description: Патриотическая направленность
+        GERCHIKOV_MASTER:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.7
+          description: Стремление к мастерству
+        GERCHIKOV_AVOIDING:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.2
+          description: Избегание ответственности
+        compatibilityDiscPercent:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 85
+          description: Процент совместимости характера участника с командой
+        compatibilityGerchikovPercent:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 88
+          description: Процент совместимости мотивационного профиля с командой
+        totalCompatibilityPercent:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 86
+          description: Общий процент соответствия участника команде
+
+    CandidateAnalytics:
+      type: object
+      title: Аналитика кандидата
+      description: Проценты совместимости кандидата с командой
+      required:
+        - compatibilityDiscPercent
+        - compatibilityGerchikovPercent
+        - totalCompatibilityPercent
+      properties:
+        compatibilityDiscPercent:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 88
+          description: Совместимость характера кандидата (DISC) с командой
+        compatibilityGerchikovPercent:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 90
+          description: Совместимость мотивационного профиля кандидата (Герчиков) с командой
+        totalCompatibilityPercent:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 89
+          description: Общий процент соответствия кандидата команде
+
+    Team:
+      type: object
+      title: Команда
+      required:
+        - id
+        - name
+        - limit
+        - memberCount
+        - totalCompatibilityPercent
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Разработка"
+        limit:
+          type: integer
+          example: 10
+          description: Максимальное количество участников
+        memberCount:
+          type: integer
+          minimum: 0
+          example: 6
+          description: Текущее количество участников
+        totalCompatibilityPercent:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 80
+          description: Общий процент совместимости команды
+
+    TeamMember:
+      type: object
+      title: Участник команды
+      required:
+        - id
+        - fullName
+        - role
+        - totalCompatibilityPercent
+      properties:
+        id:
+          type: integer
+          example: 101
+        fullName:
+          type: string
+          example: "Иванов Иван Иванович"
+        role:
+          type: string
+          example: "Frontend Developer"
+        totalCompatibilityPercent:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 86
+          description: Общий процент соответствия участника команде
+
+    Candidate:
+      type: object
+      title: Кандидат
+      required:
+        - id
+        - fullName
+        - role
+        - analytics
+      properties:
+        id:
+          type: integer
+          example: 201
+        fullName:
+          type: string
+          example: "Петров Алексей Сергеевич"
+        role:
+          type: string
+          example: "Backend Developer"
+        analytics:
+          $ref: '#/components/schemas/CandidateAnalytics'
+
+paths:
+  /teams:
+    get:
+      summary: Получить список всех команд
+      description: Возвращает список команд с лимитом, текущим количеством участников и общим процентом совместимости.
+      operationId: getTeams
+      responses:
+        '200':
+          description: Список команд
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Team'
+
+  /teams/{id}/analytics:
+    get:
+      summary: Получить аналитику команды по ID
+      description: Возвращает полные показатели совместимости и средние профили команды
+      operationId: getTeamAnalytics
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID команды
+      responses:
+        '200':
+          description: Аналитика команды
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamAnalytics'
+        '404':
+          description: Команда не найдена
+          content: {}
+
+  /teams/{id}/members:
+    get:
+      summary: Получить всех участников команды по ID
+      description: Возвращает список участников с их общей совместимостью с командой. Подробные метрики — в /members/{id}/analytics
+      operationId: getTeamMembers
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID команды
+      responses:
+        '200':
+          description: Список участников
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeamMember'
+        '404':
+          description: Команда не найдена
+          content: {}
+
+  /teams/{teamId}/members/{memberId}/analytics:
+    get:
+      summary: Получить аналитику участника команды
+      description: Возвращает полные личные метрики участника и его проценты совместимости с командой
+      operationId: getMemberAnalytics
+      parameters:
+        - name: teamId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID команды
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID участника
+      responses:
+        '200':
+          description: Аналитика участника
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberAnalytics'
+        '404':
+          description: Участник или команда не найдены
+          content: {}
+
+  /teams/{id}/open-roles:
+    get:
+      summary: Получить список искомых ролей для команды
+      description: Возвращает список ролей, которые ищутся для заполнения в указанной команде
+      operationId: getTeamOpenRoles
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID команды
+      responses:
+        '200':
+          description: Список искомых ролей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example:
+                  - "Backend Developer"
+                  - "Team Lead"
+        '404':
+          description: Команда не найдена
+          content: {}
+
+  /teams/{id}/candidates:
+    get:
+      summary: Найти кандидатов для команды по ID
+      description: >
+        Возвращает список кандидатов, подходящих под искомые роли команды.
+
+        - Если параметр `role` не указан — возвращаются кандидаты для **всех искомых ролей**.
+        - Если параметр `role` указан — фильтрация по роли.
+
+        Для каждого кандидата возвращается аналитика совместимости с командой.
+      operationId: getCandidatesForTeam
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID команды
+        - name: role
+          in: query
+          required: false
+          schema:
+            type: string
+            nullable: true
+          description: Фильтр по роли. Если не указан — все искомые роли.
+      responses:
+        '200':
+          description: Список кандидатов с аналитикой
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Candidate'
+        '404':
+          description: Команда не найдена
+          content: {}
+        '400':
+          description: Некорректный ID
+          content: {}

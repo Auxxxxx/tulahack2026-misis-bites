@@ -1,0 +1,25 @@
+buildscript {
+    repositories {
+        maven { setUrl("https://nexus-new.tcsbank.ru/repository/gradle-plugins") }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:3.4.0'
+        classpath 'io.spring.gradle:dependency-management-plugin:1.1.6'
+        classpath 'org.liquibase:liquibase-gradle-plugin:2.2.0'
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    
+    java {
+        sourceCompatibility = '17'
+    }
+    
+    repositories {
+        maven { setUrl("https://nexus-new.tcsbank.ru/repository/gradle-plugins") }
+        mavenCentral()
+    }
+}
