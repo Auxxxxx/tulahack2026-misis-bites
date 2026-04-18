@@ -9,11 +9,11 @@ COPY gradle/wrapper/ ./gradle/wrapper/
 COPY gradlew ./
 
 RUN chmod +x gradlew
-RUN ./gradlew dependencies
+RUN ./gradlew dependencies --no-daemon || true
 
 COPY . .
 
-RUN ./gradlew bootJar -x test
+RUN ./gradlew bootJar --no-daemon -x test
 
 FROM eclipse-temurin:17-jdk
 
