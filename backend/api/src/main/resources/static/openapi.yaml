@@ -104,6 +104,34 @@ components:
           example: 80
           description: Общий процент совместимости команды
 
+    CandidateAnalytics:
+      type: object
+      title: Аналитика совместимости кандидата
+      description: Проценты совместимости кандидата с командой
+      required:
+        - compatibilityDiscPercent
+        - compatibilityGerchikovPercent
+        - totalCompatibilityPercent
+      properties:
+        compatibilityDiscPercent:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 88
+          description: Совместимость характера кандидата (DISC) с командой
+        compatibilityGerchikovPercent:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 90
+          description: Совместимость мотивационного профиля кандидата (Герчиков) с командой
+        totalCompatibilityPercent:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 89
+          description: Общий процент соответствия кандидата команде
+
     MemberAnalytics:
       type: object
       title: Аналитика участника
@@ -204,33 +232,111 @@ components:
           example: 86
           description: Общий процент соответствия участника команде
 
-    CandidateAnalytics:
+    CandidateRecommendations:
       type: object
-      title: Аналитика кандидата
-      description: Проценты совместимости кандидата с командой
+      title: Рекомендации по кандидату
       required:
-        - compatibilityDiscPercent
-        - compatibilityGerchikovPercent
-        - totalCompatibilityPercent
+        - DISC_D
+        - DISC_I
+        - DISC_S
+        - DISC_C
+        - GERCHIKOV_INSTRUMENTAL
+        - GERCHIKOV_PROFESSIONAL
+        - GERCHIKOV_PATRIOTIC
+        - GERCHIKOV_MASTER
+        - GERCHIKOV_AVOIDING
+        - analytics
+        - pros
+        - cons
+        - recommendation
       properties:
-        compatibilityDiscPercent:
-          type: integer
+        DISC_D:
+          type: number
+          format: float
           minimum: 0
-          maximum: 100
-          example: 88
-          description: Совместимость характера кандидата (DISC) с командой
-        compatibilityGerchikovPercent:
-          type: integer
+          maximum: 1
+          example: 0.6
+          description: Личное значение D (Dominance) кандидата
+        DISC_I:
+          type: number
+          format: float
           minimum: 0
-          maximum: 100
-          example: 90
-          description: Совместимость мотивационного профиля кандидата (Герчиков) с командой
-        totalCompatibilityPercent:
-          type: integer
+          maximum: 1
+          example: 0.4
+          description: Личное значение I (Influence)
+        DISC_S:
+          type: number
+          format: float
           minimum: 0
-          maximum: 100
-          example: 89
-          description: Общий процент соответствия кандидата команде
+          maximum: 1
+          example: 0.5
+          description: Личное значение S (Steadiness)
+        DISC_C:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.8
+          description: Личное значение C (Compliance)
+        GERCHIKOV_INSTRUMENTAL:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.7
+          description: Инструментальная направленность
+        GERCHIKOV_PROFESSIONAL:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.9
+          description: Профессиональное самосознание
+        GERCHIKOV_PATRIOTIC:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.3
+          description: Патриотическая направленность
+        GERCHIKOV_MASTER:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.6
+          description: Стремление к мастерству
+        GERCHIKOV_AVOIDING:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.1
+          description: Избегание ответственности
+        analytics:
+          $ref: '#/components/schemas/CandidateAnalytics'
+          description: Проценты совместимости кандидата с командой
+        pros:
+          type: array
+          items:
+            type: string
+          example:
+            - "Высокая структурность и внимательность к деталям (C=0.8)"
+            - "Сильная профессиональная мотивация"
+            - "Хорошо вписывается в командный стиль"
+          description: Сильные стороны кандидата в контексте команды
+        cons:
+          type: array
+          items:
+            type: string
+          example:
+            - "Низкая склонность к инициативе (D=0.6)"
+            - "Может избегать конфликтов"
+          description: Потенциальные риски или зоны развития
+        recommendation:
+          type: string
+          example: "Кандидат рекомендован к включению в команду. Наиболее подходит на роль Middle+ Backend Developer. Рекомендуется закрепить за наставником на первые 2 недели."
+          description: Текстовая рекомендация по кандидату от системы
 
     Team:
       type: object
@@ -467,6 +573,38 @@ paths:
                   $ref: '#/components/schemas/Candidate'
         '404':
           description: Команда не найдена
+          content: {}
+        '400':
+          description: Некорректный ID
+          content: {}
+
+  /teams/{teamId}/candidates/{candidateId}/recommendations:
+    get:
+      summary: Получить рекомендации по кандидату
+      description: Возвращает полные метрики кандидата, аналитику совместимости, сильные и слабые стороны, а также текстовую рекомендацию
+      operationId: getCandidateRecommendations
+      parameters:
+        - name: teamId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID команды
+        - name: candidateId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID кандидата
+      responses:
+        '200':
+          description: Полные рекомендации по кандидату
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateRecommendations'
+        '404':
+          description: Кандидат или команда не найдены
           content: {}
         '400':
           description: Некорректный ID

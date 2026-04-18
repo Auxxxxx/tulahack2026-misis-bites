@@ -1,6 +1,7 @@
 package com.tulahack.misisbites.api.controller;
 
 import com.tulahack.misisbites.api.dto.*;
+import com.tulahack.misisbites.api.service.RecommendationService;
 import com.tulahack.misisbites.api.service.TeamService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,6 +23,7 @@ import java.util.List;
 public class TeamController {
 
     private final TeamService teamService;
+    private final RecommendationService recommendationService;
 
     @GetMapping
     @Operation(summary = "Получить список всех команд")
@@ -81,5 +83,17 @@ public class TeamController {
             @Parameter(description = "ID команды") @PathVariable Long id,
             @Parameter(description = "Фильтр по роли") @RequestParam(required = false) String role) {
         return ResponseEntity.ok(teamService.getCandidatesForTeam(id, role));
+    }
+
+    @GetMapping("/{teamId}/candidates/{candidateId}/recommendations")
+    @Operation(summary = "Получить рекомендации по кандидату")
+    @ApiResponse(responseCode = "200", description = "Полные рекомендации по кандидату",
+            content = @Content(schema = @Schema(implementation = CandidateRecommendationsDto.class)))
+    @ApiResponse(responseCode = "404", description = "Кандидат или команда не найдены")
+    @ApiResponse(responseCode = "400", description = "Некорректный ID")
+    public ResponseEntity<CandidateRecommendationsDto> getCandidateRecommendations(
+            @Parameter(description = "ID команды") @PathVariable Long teamId,
+            @Parameter(description = "ID кандидата") @PathVariable Long candidateId) {
+        return ResponseEntity.ok(recommendationService.getCandidateRecommendations(teamId, candidateId));
     }
 }

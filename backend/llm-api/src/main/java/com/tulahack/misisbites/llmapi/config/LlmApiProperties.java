@@ -1,48 +1,26 @@
 package com.tulahack.misisbites.llmapi.config;
 
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.validation.annotation.Validated;
 
+@Data
 @Configuration
 @ConfigurationProperties(prefix = "llm.api")
+@Validated
 public class LlmApiProperties {
 
     private String baseUrl = "https://agent.timeweb.cloud/api/v1/cloud-ai/agents";
+
+    @NotBlank
     private String agentId;
+
+    @NotBlank
     private String apiKey;
+
     private String model = "deepseek-chat";
-
-    public String getBaseUrl() {
-        return baseUrl;
-    }
-
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
-    }
-
-    public String getAgentId() {
-        return agentId;
-    }
-
-    public void setAgentId(String agentId) {
-        this.agentId = agentId;
-    }
-
-    public String getApiKey() {
-        return apiKey;
-    }
-
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
 
     public String getChatCompletionsUrl() {
         return baseUrl + "/" + agentId + "/v1/chat/completions";
