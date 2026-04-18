@@ -1,6 +1,5 @@
 buildscript {
     repositories {
-        maven { setUrl("https://nexus-new.tcsbank.ru/repository/gradle-plugins") }
         mavenCentral()
         gradlePluginPortal()
     }
@@ -16,7 +15,6 @@ subprojects {
     apply plugin: 'io.spring.dependency-management'
     
     repositories {
-        maven { setUrl("https://nexus-new.tcsbank.ru/repository/gradle-plugins") }
         mavenCentral()
     }
     
