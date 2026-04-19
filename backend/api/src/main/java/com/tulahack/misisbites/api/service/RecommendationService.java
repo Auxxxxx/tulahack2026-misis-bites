@@ -399,14 +399,14 @@ public class RecommendationService {
     /**
      * Normalize DISC value from 0-24 scale to 0-1 scale
      */
-    private double normalizeDisc(double value) {
+    private static double normalizeDisc(double value) {
         return value / 24.0;
     }
 
     /**
      * Normalize Gerchikov value from 0-10 scale to 0-1 scale
      */
-    private double normalizeGerchikov(double value) {
+    private static double normalizeGerchikov(double value) {
         return value / 10.0;
     }
 }
