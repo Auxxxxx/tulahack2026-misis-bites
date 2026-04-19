@@ -123,6 +123,7 @@ public class LlmApiService {
         while (true) {
             try {
                 // Retry HTTP requests with exponential backoff
+                log.info("{}", request);
                 ChatCompletionResponse response = webClient.post()
                         .uri("/" + properties.getAgentId() + "/v1/chat/completions")
                         .bodyValue(chatRequest)
