@@ -162,9 +162,11 @@ public class LlmApiService {
     /**
      * Generates a cache key based on the request content.
      * Uses SHA-256 hash of the serialized request to create a unique key.
+     * Includes the person type (CANDIDATE/TEAM_MEMBER) in the cache key.
      */
     private String generateCacheKey(RecommendationRequest request) {
         try {
+            // Include type in cache key to differentiate between candidate and member recommendations
             String json = objectMapper.writeValueAsString(request);
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = digest.digest(json.getBytes(StandardCharsets.UTF_8));

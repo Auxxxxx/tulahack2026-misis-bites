@@ -1,6 +1,7 @@
 package com.tulahack.misisbites.api.controller;
 
 import com.tulahack.misisbites.api.dto.*;
+import com.tulahack.misisbites.api.dto.MemberRecommendationsDto;
 import com.tulahack.misisbites.api.service.RecommendationService;
 import com.tulahack.misisbites.api.service.TeamService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -95,5 +96,17 @@ public class TeamController {
             @Parameter(description = "ID команды") @PathVariable Long teamId,
             @Parameter(description = "ID кандидата") @PathVariable Long candidateId) {
         return ResponseEntity.ok(recommendationService.getCandidateRecommendations(teamId, candidateId));
+    }
+
+    @GetMapping("/{teamId}/members/{memberId}/recommendations")
+    @Operation(summary = "Получить рекомендации по участнику команды")
+    @ApiResponse(responseCode = "200", description = "Полные рекомендации по участнику команды",
+            content = @Content(schema = @Schema(implementation = MemberRecommendationsDto.class)))
+    @ApiResponse(responseCode = "404", description = "Участник или команда не найдены")
+    @ApiResponse(responseCode = "400", description = "Некорректный ID")
+    public ResponseEntity<MemberRecommendationsDto> getMemberRecommendations(
+            @Parameter(description = "ID команды") @PathVariable Long teamId,
+            @Parameter(description = "ID участника") @PathVariable Long memberId) {
+        return ResponseEntity.ok(recommendationService.getMemberRecommendations(teamId, memberId));
     }
 }

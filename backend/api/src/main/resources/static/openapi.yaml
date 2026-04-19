@@ -338,6 +338,112 @@ components:
           example: "Кандидат рекомендован к включению в команду. Наиболее подходит на роль Middle+ Backend Developer. Рекомендуется закрепить за наставником на первые 2 недели."
           description: Текстовая рекомендация по кандидату от системы
 
+    MemberRecommendations:
+      type: object
+      title: Рекомендации по участнику команды
+      required:
+        - DISC_D
+        - DISC_I
+        - DISC_S
+        - DISC_C
+        - GERCHIKOV_INSTRUMENTAL
+        - GERCHIKOV_PROFESSIONAL
+        - GERCHIKOV_PATRIOTIC
+        - GERCHIKOV_MASTER
+        - GERCHIKOV_AVOIDING
+        - analytics
+        - pros
+        - cons
+        - recommendation
+      properties:
+        DISC_D:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.7
+          description: Личное значение D (Dominance) участника
+        DISC_I:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.5
+          description: Личное значение I (Influence)
+        DISC_S:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.3
+          description: Личное значение S (Steadiness)
+        DISC_C:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.9
+          description: Личное значение C (Compliance)
+        GERCHIKOV_INSTRUMENTAL:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.6
+          description: Инструментальная направленность
+        GERCHIKOV_PROFESSIONAL:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.8
+          description: Профессиональное самосознание
+        GERCHIKOV_PATRIOTIC:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.4
+          description: Патриотическая направленность
+        GERCHIKOV_MASTER:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.7
+          description: Стремление к мастерству
+        GERCHIKOV_AVOIDING:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.2
+          description: Избегание ответственности
+        analytics:
+          $ref: '#/components/schemas/MemberAnalytics'
+          description: Проценты совместимости участника с командой
+        pros:
+          type: array
+          items:
+            type: string
+          example:
+            - "Высокая структурность и внимательность к деталям (C=0.9)"
+            - "Сильная профессиональная мотивация"
+            - "Хорошо вписывается в командный стиль"
+          description: Сильные стороны участника в контексте команды
+        cons:
+          type: array
+          items:
+            type: string
+          example:
+            - "Низкая склонность к инициативе (D=0.7)"
+            - "Может избегать конфликтов"
+          description: Потенциальные риски или зоны развития
+        recommendation:
+          type: string
+          example: "Участник эффективно работает в команде. Рекомендуется развивать лидерские качества и делегирование задач."
+          description: Текстовая рекомендация по участнику от системы
+
     Team:
       type: object
       title: Команда
@@ -605,6 +711,38 @@ paths:
                 $ref: '#/components/schemas/CandidateRecommendations'
         '404':
           description: Кандидат или команда не найдены
+          content: {}
+        '400':
+          description: Некорректный ID
+          content: {}
+
+  /teams/{teamId}/members/{memberId}/recommendations:
+    get:
+      summary: Получить рекомендации по участнику команды
+      description: Возвращает полные метрики участника, аналитику совместимости, сильные и слабые стороны, а также текстовую рекомендацию
+      operationId: getMemberRecommendations
+      parameters:
+        - name: teamId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID команды
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID участника
+      responses:
+        '200':
+          description: Полные рекомендации по участнику команды
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberRecommendations'
+        '404':
+          description: Участник или команда не найдены
           content: {}
         '400':
           description: Некорректный ID

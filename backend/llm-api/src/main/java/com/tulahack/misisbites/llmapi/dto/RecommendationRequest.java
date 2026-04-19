@@ -18,6 +18,11 @@ import java.util.List;
 public class RecommendationRequest {
     
     /**
+     * Type of person: CANDIDATE or TEAM_MEMBER
+     */
+    private PersonType type;
+    
+    /**
      * Team analytics data
      */
     private TeamAnalytics teamAnalytics;
@@ -31,6 +36,14 @@ public class RecommendationRequest {
      * Candidate data with their metrics (without personal data)
      */
     private CandidateData candidate;
+    
+    /**
+     * Person type enum
+     */
+    public enum PersonType {
+        CANDIDATE,
+        TEAM_MEMBER
+    }
 
     @Data
     @NoArgsConstructor
