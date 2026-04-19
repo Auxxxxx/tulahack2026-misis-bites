@@ -132,6 +132,7 @@ public class LlmApiService {
                                 .maxBackoff(Duration.ofSeconds(30))
                                 .onRetryExhaustedThrow((spec, signal) -> signal.failure()))
                         .block();
+                log.error("{}", response);
                 
                 if (response != null && response.getChoices() != null && !response.getChoices().isEmpty()) {
                     String content = response.getChoices().get(0).getMessage().getContent();
