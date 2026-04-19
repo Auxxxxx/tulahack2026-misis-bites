@@ -146,15 +146,15 @@ public class LlmApiService {
                 
                 throw new RuntimeException("Empty response from LLM API");
             } catch (JsonProcessingException e) {
-                attempt++;
-                // Wait before retry with exponential backoff
-                long delayMs = Duration.ofSeconds(1).multipliedBy(attempt).toMillis();
-                try {
-                    Thread.sleep(delayMs);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    throw new RuntimeException("Interrupted during retry wait", ie);
-                }
+//                attempt++;
+//                // Wait before retry with exponential backoff
+//                long delayMs = Duration.ofSeconds(1).toMillis();
+//                try {
+//                    Thread.sleep(delayMs);
+//                } catch (InterruptedException ie) {
+//                    Thread.currentThread().interrupt();
+//                    throw new RuntimeException("Interrupted during retry wait", ie);
+//                }
             }
         }
     }
