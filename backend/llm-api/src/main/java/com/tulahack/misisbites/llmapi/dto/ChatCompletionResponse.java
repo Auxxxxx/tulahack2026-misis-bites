@@ -1,7 +1,10 @@
 package com.tulahack.misisbites.llmapi.dto;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class ChatCompletionResponse {
     private String id;
     private String object;
@@ -61,6 +64,7 @@ public class ChatCompletionResponse {
         this.usage = usage;
     }
 
+    @Data
     public static class Choice {
         private int index;
         private Message message;
@@ -94,6 +98,7 @@ public class ChatCompletionResponse {
         }
     }
 
+    @Data
     public static class Message {
         private String role;
         private String content;
@@ -118,6 +123,7 @@ public class ChatCompletionResponse {
         }
     }
 
+    @Data
     public static class Usage {
         private int promptTokens;
         private int completionTokens;
