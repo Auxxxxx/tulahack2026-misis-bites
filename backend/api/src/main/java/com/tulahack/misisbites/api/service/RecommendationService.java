@@ -11,8 +11,8 @@ import com.tulahack.misisbites.api.repository.CandidateRepository;
 import com.tulahack.misisbites.api.repository.TeamMemberRepository;
 import com.tulahack.misisbites.api.repository.TeamRepository;
 import com.tulahack.misisbites.compute.CompatibilityCalculator;
-import com.tulahack.misisbites.compute.CompatibilityCalculator.DiscAverages;
-import com.tulahack.misisbites.compute.CompatibilityCalculator.GerchikovAverages;
+import com.tulahack.misisbites.compute.CompatibilityCalculator.TeamMemberMetrics;
+import com.tulahack.misisbites.compute.CompatibilityCalculator.Role;
 import com.tulahack.misisbites.llmapi.dto.RecommendationRequest;
 import com.tulahack.misisbites.llmapi.dto.RecommendationRequest.PersonType;
 import com.tulahack.misisbites.llmapi.dto.RecommendationResponse;
@@ -86,37 +86,39 @@ public class RecommendationService {
                     .build();
         }
 
-        List<CompatibilityCalculator.DiscMetrics> discMetrics = members.stream()
-                .map(m -> new CompatibilityCalculator.DiscMetrics() {
-                    public double getD() { return m.getDiscD(); }
-                    public double getI() { return m.getDiscI(); }
-                    public double getS() { return m.getDiscS(); }
-                    public double getC() { return m.getDiscC(); }
-                }).collect(Collectors.toList());
+        // Convert team members to TeamMemberMetrics for the calculator
+        List<TeamMemberMetrics> teamMetrics = members.stream()
+                .map(m -> new TeamMemberMetricsAdapter(m))
+                .collect(Collectors.toList());
 
-        List<CompatibilityCalculator.GerchikovMetrics> gerchikovMetrics = members.stream()
-                .map(m -> new CompatibilityCalculator.GerchikovMetrics() {
-                    public double getInstrumental() { return m.getGerchikovInstrumental(); }
-                    public double getProfessional() { return m.getGerchikovProfessional(); }
-                    public double getPatriotic() { return m.getGerchikovPatriotic(); }
-                    public double getMaster() { return m.getGerchikovMaster(); }
-                    public double getAvoiding() { return m.getGerchikovAvoiding(); }
-                }).collect(Collectors.toList());
+        // Calculate team averages for the request
+        double[] discAvg = calculator.calculateTeamDiscAverages(teamMetrics);
+        double[] gerchikovAvg = calculator.calculateTeamGerchikovAverages(teamMetrics);
 
-        DiscAverages discAvg = calculator.calculateTeamDiscAverages(discMetrics);
-        GerchikovAverages gerchikovAvg = calculator.calculateTeamGerchikovAverages(gerchikovMetrics);
+        // Calculate compatibility scores using the new formula
+        Role role = parseRole(candidate.getRole());
+        int totalCompat = calculator.calculateTotalCompatibility(
+                normalizeDisc(candidate.getDiscD()), normalizeDisc(candidate.getDiscI()), 
+                normalizeDisc(candidate.getDiscS()), normalizeDisc(candidate.getDiscC()),
+                normalizeGerchikov(candidate.getGerchikovInstrumental()), 
+                normalizeGerchikov(candidate.getGerchikovProfessional()),
+                normalizeGerchikov(candidate.getGerchikovPatriotic()), 
+                normalizeGerchikov(candidate.getGerchikovMaster()), 
+                normalizeGerchikov(candidate.getGerchikovAvoiding()),
+                teamMetrics, role);
 
-        int discCompat = calculator.calculateDiscCompatibility(
-                candidate.getDiscD(), candidate.getDiscI(), candidate.getDiscS(), candidate.getDiscC(),
-                discAvg.getD(), discAvg.getI(), discAvg.getS(), discAvg.getC());
-
-        int gerchikovCompat = calculator.calculateGerchikovCompatibility(
-                candidate.getGerchikovInstrumental(), candidate.getGerchikovProfessional(),
-                candidate.getGerchikovPatriotic(), candidate.getGerchikovMaster(), candidate.getGerchikovAvoiding(),
-                gerchikovAvg.getInstrumental(), gerchikovAvg.getProfessional(),
-                gerchikovAvg.getPatriotic(), gerchikovAvg.getMaster(), gerchikovAvg.getAvoiding());
-
-        int totalCompat = calculator.calculateTotalCompatibility(discCompat, gerchikovCompat);
+        // Calculate individual component scores for display
+        double sDisc = calculator.calculateS_disc(
+                normalizeDisc(candidate.getDiscD()), normalizeDisc(candidate.getDiscI()), 
+                normalizeDisc(candidate.getDiscS()), normalizeDisc(candidate.getDiscC()),
+                teamMetrics);
+        double sGerch = calculator.calculateS_gerch(
+                normalizeGerchikov(candidate.getGerchikovInstrumental()), 
+                normalizeGerchikov(candidate.getGerchikovProfessional()),
+                normalizeGerchikov(candidate.getGerchikovPatriotic()), 
+                normalizeGerchikov(candidate.getGerchikovMaster()), 
+                normalizeGerchikov(candidate.getGerchikovAvoiding()),
+                teamMetrics);
 
         List<RecommendationRequest.TeamMemberData> teamMemberData = members.stream()
                 .map(m -> RecommendationRequest.TeamMemberData.builder()
@@ -129,19 +131,19 @@ public class RecommendationService {
                 .type(PersonType.CANDIDATE)
                 .teamAnalytics(RecommendationRequest.TeamAnalytics.builder()
                         .avgDISC(RecommendationRequest.DiscAverages.builder()
-                                .D(discAvg.getD()).I(discAvg.getI()).S(discAvg.getS()).C(discAvg.getC()).build())
+                                .D(discAvg[0]).I(discAvg[1]).S(discAvg[2]).C(discAvg[3]).build())
                         .avgGerchikov(RecommendationRequest.GerchikovAverages.builder()
-                                .INSTRUMENTAL(gerchikovAvg.getInstrumental())
-                                .PROFESSIONAL(gerchikovAvg.getProfessional())
-                                .PATRIOTIC(gerchikovAvg.getPatriotic())
-                                .MASTER(gerchikovAvg.getMaster())
-                                .AVOIDING(gerchikovAvg.getAvoiding()).build())
-                        .compatibilityDiscPercent(discCompat)
-                        .compatibilityGerchikovPercent(gerchikovCompat)
+                                .INSTRUMENTAL(gerchikovAvg[0])
+                                .PROFESSIONAL(gerchikovAvg[1])
+                                .PATRIOTIC(gerchikovAvg[2])
+                                .MASTER(gerchikovAvg[3])
+                                .AVOIDING(gerchikovAvg[4]).build())
+                        .compatibilityDiscPercent((int) Math.round(sDisc * 100))
+                        .compatibilityGerchikovPercent((int) Math.round(sGerch * 100))
                         .totalCompatibilityPercent(totalCompat)
                         .build())
                 .teamMembers(teamMemberData)
-                .candidate(toCandidateData(candidate, discCompat, gerchikovCompat, totalCompat))
+                .candidate(toCandidateData(candidate, (int) Math.round(sDisc * 100), (int) Math.round(sGerch * 100), totalCompat))
                 .build();
     }
 
@@ -164,37 +166,39 @@ public class RecommendationService {
                     .build();
         }
 
-        List<CompatibilityCalculator.DiscMetrics> discMetrics = otherMembers.stream()
-                .map(m -> new CompatibilityCalculator.DiscMetrics() {
-                    public double getD() { return m.getDiscD(); }
-                    public double getI() { return m.getDiscI(); }
-                    public double getS() { return m.getDiscS(); }
-                    public double getC() { return m.getDiscC(); }
-                }).collect(Collectors.toList());
+        // Convert team members to TeamMemberMetrics for the calculator
+        List<TeamMemberMetrics> teamMetrics = otherMembers.stream()
+                .map(m -> new TeamMemberMetricsAdapter(m))
+                .collect(Collectors.toList());
 
-        List<CompatibilityCalculator.GerchikovMetrics> gerchikovMetrics = otherMembers.stream()
-                .map(m -> new CompatibilityCalculator.GerchikovMetrics() {
-                    public double getInstrumental() { return m.getGerchikovInstrumental(); }
-                    public double getProfessional() { return m.getGerchikovProfessional(); }
-                    public double getPatriotic() { return m.getGerchikovPatriotic(); }
-                    public double getMaster() { return m.getGerchikovMaster(); }
-                    public double getAvoiding() { return m.getGerchikovAvoiding(); }
-                }).collect(Collectors.toList());
+        // Calculate team averages for the request
+        double[] discAvg = calculator.calculateTeamDiscAverages(teamMetrics);
+        double[] gerchikovAvg = calculator.calculateTeamGerchikovAverages(teamMetrics);
 
-        DiscAverages discAvg = calculator.calculateTeamDiscAverages(discMetrics);
-        GerchikovAverages gerchikovAvg = calculator.calculateTeamGerchikovAverages(gerchikovMetrics);
+        // Calculate compatibility scores using the new formula
+        Role role = parseRole(member.getRole());
+        int totalCompat = calculator.calculateTotalCompatibility(
+                normalizeDisc(member.getDiscD()), normalizeDisc(member.getDiscI()), 
+                normalizeDisc(member.getDiscS()), normalizeDisc(member.getDiscC()),
+                normalizeGerchikov(member.getGerchikovInstrumental()), 
+                normalizeGerchikov(member.getGerchikovProfessional()),
+                normalizeGerchikov(member.getGerchikovPatriotic()), 
+                normalizeGerchikov(member.getGerchikovMaster()), 
+                normalizeGerchikov(member.getGerchikovAvoiding()),
+                teamMetrics, role);
 
-        int discCompat = calculator.calculateDiscCompatibility(
-                member.getDiscD(), member.getDiscI(), member.getDiscS(), member.getDiscC(),
-                discAvg.getD(), discAvg.getI(), discAvg.getS(), discAvg.getC());
-
-        int gerchikovCompat = calculator.calculateGerchikovCompatibility(
-                member.getGerchikovInstrumental(), member.getGerchikovProfessional(),
-                member.getGerchikovPatriotic(), member.getGerchikovMaster(), member.getGerchikovAvoiding(),
-                gerchikovAvg.getInstrumental(), gerchikovAvg.getProfessional(),
-                gerchikovAvg.getPatriotic(), gerchikovAvg.getMaster(), gerchikovAvg.getAvoiding());
-
-        int totalCompat = calculator.calculateTotalCompatibility(discCompat, gerchikovCompat);
+        // Calculate individual component scores for display
+        double sDisc = calculator.calculateS_disc(
+                normalizeDisc(member.getDiscD()), normalizeDisc(member.getDiscI()), 
+                normalizeDisc(member.getDiscS()), normalizeDisc(member.getDiscC()),
+                teamMetrics);
+        double sGerch = calculator.calculateS_gerch(
+                normalizeGerchikov(member.getGerchikovInstrumental()), 
+                normalizeGerchikov(member.getGerchikovProfessional()),
+                normalizeGerchikov(member.getGerchikovPatriotic()), 
+                normalizeGerchikov(member.getGerchikovMaster()), 
+                normalizeGerchikov(member.getGerchikovAvoiding()),
+                teamMetrics);
 
         List<RecommendationRequest.TeamMemberData> teamMemberData = otherMembers.stream()
                 .map(m -> RecommendationRequest.TeamMemberData.builder()
@@ -207,19 +211,19 @@ public class RecommendationService {
                 .type(PersonType.TEAM_MEMBER)
                 .teamAnalytics(RecommendationRequest.TeamAnalytics.builder()
                         .avgDISC(RecommendationRequest.DiscAverages.builder()
-                                .D(discAvg.getD()).I(discAvg.getI()).S(discAvg.getS()).C(discAvg.getC()).build())
+                                .D(discAvg[0]).I(discAvg[1]).S(discAvg[2]).C(discAvg[3]).build())
                         .avgGerchikov(RecommendationRequest.GerchikovAverages.builder()
-                                .INSTRUMENTAL(gerchikovAvg.getInstrumental())
-                                .PROFESSIONAL(gerchikovAvg.getProfessional())
-                                .PATRIOTIC(gerchikovAvg.getPatriotic())
-                                .MASTER(gerchikovAvg.getMaster())
-                                .AVOIDING(gerchikovAvg.getAvoiding()).build())
-                        .compatibilityDiscPercent(discCompat)
-                        .compatibilityGerchikovPercent(gerchikovCompat)
+                                .INSTRUMENTAL(gerchikovAvg[0])
+                                .PROFESSIONAL(gerchikovAvg[1])
+                                .PATRIOTIC(gerchikovAvg[2])
+                                .MASTER(gerchikovAvg[3])
+                                .AVOIDING(gerchikovAvg[4]).build())
+                        .compatibilityDiscPercent((int) Math.round(sDisc * 100))
+                        .compatibilityGerchikovPercent((int) Math.round(sGerch * 100))
                         .totalCompatibilityPercent(totalCompat)
                         .build())
                 .teamMembers(teamMemberData)
-                .candidate(toCandidateDataFromMember(member, discCompat, gerchikovCompat, totalCompat))
+                .candidate(toCandidateDataFromMember(member, (int) Math.round(sDisc * 100), (int) Math.round(sGerch * 100), totalCompat))
                 .build();
     }
 
@@ -326,36 +330,83 @@ public class RecommendationService {
             return 100;
         }
 
-        List<CompatibilityCalculator.DiscMetrics> discMetrics = otherMembers.stream()
-                .map(m -> new CompatibilityCalculator.DiscMetrics() {
-                    public double getD() { return m.getDiscD(); }
-                    public double getI() { return m.getDiscI(); }
-                    public double getS() { return m.getDiscS(); }
-                    public double getC() { return m.getDiscC(); }
-                }).collect(Collectors.toList());
+        List<TeamMemberMetrics> teamMetrics = otherMembers.stream()
+                .map(TeamMemberMetricsAdapter::new)
+                .collect(Collectors.toList());
 
-        List<CompatibilityCalculator.GerchikovMetrics> gerchikovMetrics = otherMembers.stream()
-                .map(m -> new CompatibilityCalculator.GerchikovMetrics() {
-                    public double getInstrumental() { return m.getGerchikovInstrumental(); }
-                    public double getProfessional() { return m.getGerchikovProfessional(); }
-                    public double getPatriotic() { return m.getGerchikovPatriotic(); }
-                    public double getMaster() { return m.getGerchikovMaster(); }
-                    public double getAvoiding() { return m.getGerchikovAvoiding(); }
-                }).collect(Collectors.toList());
+        Role role = parseRole(member.getRole());
+        return calculator.calculateTotalCompatibility(
+                normalizeDisc(member.getDiscD()), normalizeDisc(member.getDiscI()), 
+                normalizeDisc(member.getDiscS()), normalizeDisc(member.getDiscC()),
+                normalizeGerchikov(member.getGerchikovInstrumental()), 
+                normalizeGerchikov(member.getGerchikovProfessional()),
+                normalizeGerchikov(member.getGerchikovPatriotic()), 
+                normalizeGerchikov(member.getGerchikovMaster()), 
+                normalizeGerchikov(member.getGerchikovAvoiding()),
+                teamMetrics, role);
+    }
 
-        DiscAverages discAvg = calculator.calculateTeamDiscAverages(discMetrics);
-        GerchikovAverages gerchikovAvg = calculator.calculateTeamGerchikovAverages(gerchikovMetrics);
+    private Role parseRole(String roleString) {
+        if (roleString == null || roleString.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return Role.valueOf(roleString.trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
 
-        int discCompat = calculator.calculateDiscCompatibility(
-                member.getDiscD(), member.getDiscI(), member.getDiscS(), member.getDiscC(),
-                discAvg.getD(), discAvg.getI(), discAvg.getS(), discAvg.getC());
+    /**
+     * Adapter to convert TeamMember entity to TeamMemberMetrics interface
+     * Normalizes values: DISC / 24, Gerchikov / 10
+     */
+    private static class TeamMemberMetricsAdapter implements TeamMemberMetrics {
+        private final TeamMember member;
 
-        int gerchikovCompat = calculator.calculateGerchikovCompatibility(
-                member.getGerchikovInstrumental(), member.getGerchikovProfessional(),
-                member.getGerchikovPatriotic(), member.getGerchikovMaster(), member.getGerchikovAvoiding(),
-                gerchikovAvg.getInstrumental(), gerchikovAvg.getProfessional(),
-                gerchikovAvg.getPatriotic(), gerchikovAvg.getMaster(), gerchikovAvg.getAvoiding());
+        TeamMemberMetricsAdapter(TeamMember member) {
+            this.member = member;
+        }
 
-        return calculator.calculateTotalCompatibility(discCompat, gerchikovCompat);
+        @Override
+        public double getD() { return normalizeDisc(member.getDiscD()); }
+
+        @Override
+        public double getI() { return normalizeDisc(member.getDiscI()); }
+
+        @Override
+        public double getS() { return normalizeDisc(member.getDiscS()); }
+
+        @Override
+        public double getC() { return normalizeDisc(member.getDiscC()); }
+
+        @Override
+        public double getInstrumental() { return normalizeGerchikov(member.getGerchikovInstrumental()); }
+
+        @Override
+        public double getProfessional() { return normalizeGerchikov(member.getGerchikovProfessional()); }
+
+        @Override
+        public double getPatriotic() { return normalizeGerchikov(member.getGerchikovPatriotic()); }
+
+        @Override
+        public double getMaster() { return normalizeGerchikov(member.getGerchikovMaster()); }
+
+        @Override
+        public double getAvoiding() { return normalizeGerchikov(member.getGerchikovAvoiding()); }
+    }
+
+    /**
+     * Normalize DISC value from 0-24 scale to 0-1 scale
+     */
+    private double normalizeDisc(double value) {
+        return value / 24.0;
+    }
+
+    /**
+     * Normalize Gerchikov value from 0-10 scale to 0-1 scale
+     */
+    private double normalizeGerchikov(double value) {
+        return value / 10.0;
     }
 }
