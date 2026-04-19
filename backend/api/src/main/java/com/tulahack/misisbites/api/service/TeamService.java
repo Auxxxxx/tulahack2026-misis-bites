@@ -331,22 +331,22 @@ public class TeamService {
     }
 
     /**
-     * Normalize DISC value from 0-24 scale to 0-1 scale
+     * Normalize DISC value - already in 0-1 scale, return as-is
      */
     private double normalizeDisc(double value) {
-        return value / 24.0;
+        return value;
     }
 
     /**
-     * Normalize Gerchikov value from 0-10 scale to 0-1 scale
+     * Normalize Gerchikov value - already in 0-1 scale, return as-is
      */
     private double normalizeGerchikov(double value) {
-        return value / 10.0;
+        return value;
     }
 
     /**
      * Adapter to convert TeamMember entity to TeamMemberMetrics interface
-     * Normalizes values: DISC / 24, Gerchikov / 10
+     * Values are already normalized (0-1 scale) in the database
      */
     private static class TeamMemberMetricsAdapter implements TeamMemberMetrics {
         private final TeamMember member;
@@ -356,38 +356,30 @@ public class TeamService {
         }
 
         @Override
-        public double getD() { return normalizeDisc(member.getDiscD()); }
+        public double getD() { return member.getDiscD(); }
 
         @Override
-        public double getI() { return normalizeDisc(member.getDiscI()); }
+        public double getI() { return member.getDiscI(); }
 
         @Override
-        public double getS() { return normalizeDisc(member.getDiscS()); }
+        public double getS() { return member.getDiscS(); }
 
         @Override
-        public double getC() { return normalizeDisc(member.getDiscC()); }
+        public double getC() { return member.getDiscC(); }
 
         @Override
-        public double getInstrumental() { return normalizeGerchikov(member.getGerchikovInstrumental()); }
+        public double getInstrumental() { return member.getGerchikovInstrumental(); }
 
         @Override
-        public double getProfessional() { return normalizeGerchikov(member.getGerchikovProfessional()); }
+        public double getProfessional() { return member.getGerchikovProfessional(); }
 
         @Override
-        public double getPatriotic() { return normalizeGerchikov(member.getGerchikovPatriotic()); }
+        public double getPatriotic() { return member.getGerchikovPatriotic(); }
 
         @Override
-        public double getMaster() { return normalizeGerchikov(member.getGerchikovMaster()); }
+        public double getMaster() { return member.getGerchikovMaster(); }
 
         @Override
-        public double getAvoiding() { return normalizeGerchikov(member.getGerchikovAvoiding()); }
-
-        private double normalizeDisc(double value) {
-            return value / 24.0;
-        }
-
-        private double normalizeGerchikov(double value) {
-            return value / 10.0;
-        }
+        public double getAvoiding() { return member.getGerchikovAvoiding(); }
     }
 }

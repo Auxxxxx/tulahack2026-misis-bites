@@ -58,138 +58,193 @@ databaseChangeLog:
       id: 007-seed-team-members
       author: developer
       changes:
+        # Team 1: TechVision - Иванов (сильный D, лидер)
         - insert:
             tableName: team_members
             columns:
               - column: { name: team_id, valueNumeric: "1" }
               - column: { name: full_name, value: "Иванов Алексей" }
               - column: { name: role, value: "Team Lead" }
-              - column: { name: disc_d, valueNumeric: "8.5" }
-              - column: { name: disc_i, valueNumeric: "6.2" }
-              - column: { name: disc_s, valueNumeric: "7.1" }
-              - column: { name: disc_c, valueNumeric: "9.0" }
-              - column: { name: gerchikov_instrumental, valueNumeric: "7.5" }
-              - column: { name: gerchikov_professional, valueNumeric: "8.2" }
-              - column: { name: gerchikov_patriotic, valueNumeric: "6.8" }
-              - column: { name: gerchikov_master, valueNumeric: "7.9" }
-              - column: { name: gerchikov_avoiding, valueNumeric: "3.2" }
+              - column: { name: disc_d, valueNumeric: "0.92" }
+              - column: { name: disc_i, valueNumeric: "0.45" }
+              - column: { name: disc_s, valueNumeric: "0.25" }
+              - column: { name: disc_c, valueNumeric: "0.58" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "0.88" }
+              - column: { name: gerchikov_professional, valueNumeric: "0.72" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "0.45" }
+              - column: { name: gerchikov_master, valueNumeric: "0.91" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "0.15" }
+        # Team 1: Петрова (сильный I, коммуникатор)
         - insert:
             tableName: team_members
             columns:
               - column: { name: team_id, valueNumeric: "1" }
               - column: { name: full_name, value: "Петрова Мария" }
               - column: { name: role, value: "Backend Developer" }
-              - column: { name: disc_d, valueNumeric: "7.2" }
-              - column: { name: disc_i, valueNumeric: "8.5" }
-              - column: { name: disc_s, valueNumeric: "6.8" }
-              - column: { name: disc_c, valueNumeric: "7.5" }
-              - column: { name: gerchikov_instrumental, valueNumeric: "6.9" }
-              - column: { name: gerchikov_professional, valueNumeric: "7.8" }
-              - column: { name: gerchikov_patriotic, valueNumeric: "8.1" }
-              - column: { name: gerchikov_master, valueNumeric: "6.5" }
-              - column: { name: gerchikov_avoiding, valueNumeric: "4.0" }
+              - column: { name: disc_d, valueNumeric: "0.28" }
+              - column: { name: disc_i, valueNumeric: "0.89" }
+              - column: { name: disc_s, valueNumeric: "0.52" }
+              - column: { name: disc_c, valueNumeric: "0.35" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "0.55" }
+              - column: { name: gerchikov_professional, valueNumeric: "0.68" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "0.92" }
+              - column: { name: gerchikov_master, valueNumeric: "0.48" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "0.38" }
+        # Team 2: Смирнов (сильный C, аналитик)
         - insert:
             tableName: team_members
             columns:
               - column: { name: team_id, valueNumeric: "2" }
               - column: { name: full_name, value: "Смирнов Дмитрий" }
-              - column: { name: role, value: "Fullstack Developer" }
-              - column: { name: disc_d, valueNumeric: "9.1" }
-              - column: { name: disc_i, valueNumeric: "7.3" }
-              - column: { name: disc_s, valueNumeric: "5.9" }
-              - column: { name: disc_c, valueNumeric: "8.2" }
-              - column: { name: gerchikov_instrumental, valueNumeric: "8.0" }
-              - column: { name: gerchikov_professional, valueNumeric: "9.1" }
-              - column: { name: gerchikov_patriotic, valueNumeric: "7.2" }
-              - column: { name: gerchikov_master, valueNumeric: "8.5" }
-              - column: { name: gerchikov_avoiding, valueNumeric: "2.8" }
+              - column: { name: role, value: "DevOps Engineer" }
+              - column: { name: disc_d, valueNumeric: "0.42" }
+              - column: { name: disc_i, valueNumeric: "0.22" }
+              - column: { name: disc_s, valueNumeric: "0.38" }
+              - column: { name: disc_c, valueNumeric: "0.95" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "0.78" }
+              - column: { name: gerchikov_professional, valueNumeric: "0.95" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "0.35" }
+              - column: { name: gerchikov_master, valueNumeric: "0.82" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "0.22" }
+        # Team 3: Козлова (сильный S, стабилизатор)
         - insert:
             tableName: team_members
             columns:
               - column: { name: team_id, valueNumeric: "3" }
               - column: { name: full_name, value: "Козлова Елена" }
               - column: { name: role, value: "Data Analyst" }
-              - column: { name: disc_d, valueNumeric: "6.8" }
-              - column: { name: disc_i, valueNumeric: "7.9" }
-              - column: { name: disc_s, valueNumeric: "8.2" }
-              - column: { name: disc_c, valueNumeric: "9.3" }
-              - column: { name: gerchikov_instrumental, valueNumeric: "7.2" }
-              - column: { name: gerchikov_professional, valueNumeric: "8.5" }
-              - column: { name: gerchikov_patriotic, valueNumeric: "6.5" }
-              - column: { name: gerchikov_master, valueNumeric: "7.1" }
-              - column: { name: gerchikov_avoiding, valueNumeric: "3.5" }
+              - column: { name: disc_d, valueNumeric: "0.18" }
+              - column: { name: disc_i, valueNumeric: "0.35" }
+              - column: { name: disc_s, valueNumeric: "0.91" }
+              - column: { name: disc_c, valueNumeric: "0.72" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "0.62" }
+              - column: { name: gerchikov_professional, valueNumeric: "0.85" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "0.78" }
+              - column: { name: gerchikov_master, valueNumeric: "0.55" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "0.28" }
+        # Team 4: Новиков (сильный профессионал, избегающий)
+        - insert:
+            tableName: team_members
+            columns:
+              - column: { name: team_id, valueNumeric: "4" }
+              - column: { name: full_name, value: "Новиков Андрей" }
+              - column: { name: role, value: "ML Engineer" }
+              - column: { name: disc_d, valueNumeric: "0.55" }
+              - column: { name: disc_i, valueNumeric: "0.28" }
+              - column: { name: disc_s, valueNumeric: "0.42" }
+              - column: { name: disc_c, valueNumeric: "0.82" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "0.45" }
+              - column: { name: gerchikov_professional, valueNumeric: "0.98" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "0.25" }
+              - column: { name: gerchikov_master, valueNumeric: "0.65" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "0.88" }
 
   - changeSet:
       id: 008-seed-candidates
       author: developer
       changes:
+        # Кандидат 1: сильный D, инструментальный
         - insert:
             tableName: candidates
             columns:
               - column: { name: full_name, value: "Николаев Сергей" }
               - column: { name: role, value: "Backend Developer" }
-              - column: { name: disc_d, valueNumeric: "7.5" }
-              - column: { name: disc_i, valueNumeric: "6.8" }
-              - column: { name: disc_s, valueNumeric: "7.2" }
-              - column: { name: disc_c, valueNumeric: "8.1" }
-              - column: { name: gerchikov_instrumental, valueNumeric: "7.8" }
-              - column: { name: gerchikov_professional, valueNumeric: "8.3" }
-              - column: { name: gerchikov_patriotic, valueNumeric: "7.0" }
-              - column: { name: gerchikov_master, valueNumeric: "7.5" }
-              - column: { name: gerchikov_avoiding, valueNumeric: "3.8" }
+              - column: { name: disc_d, valueNumeric: "0.88" }
+              - column: { name: disc_i, valueNumeric: "0.32" }
+              - column: { name: disc_s, valueNumeric: "0.22" }
+              - column: { name: disc_c, valueNumeric: "0.65" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "0.92" }
+              - column: { name: gerchikov_professional, valueNumeric: "0.58" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "0.35" }
+              - column: { name: gerchikov_master, valueNumeric: "0.78" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "0.18" }
+        # Кандидат 2: сильный I, патриот
         - insert:
             tableName: candidates
             columns:
               - column: { name: full_name, value: "Федорова Анна" }
               - column: { name: role, value: "Frontend Developer" }
-              - column: { name: disc_d, valueNumeric: "6.9" }
-              - column: { name: disc_i, valueNumeric: "8.7" }
-              - column: { name: disc_s, valueNumeric: "7.5" }
-              - column: { name: disc_c, valueNumeric: "7.0" }
-              - column: { name: gerchikov_instrumental, valueNumeric: "6.5" }
-              - column: { name: gerchikov_professional, valueNumeric: "7.2" }
-              - column: { name: gerchikov_patriotic, valueNumeric: "8.0" }
-              - column: { name: gerchikov_master, valueNumeric: "6.8" }
-              - column: { name: gerchikov_avoiding, valueNumeric: "4.2" }
+              - column: { name: disc_d, valueNumeric: "0.25" }
+              - column: { name: disc_i, valueNumeric: "0.92" }
+              - column: { name: disc_s, valueNumeric: "0.58" }
+              - column: { name: disc_c, valueNumeric: "0.38" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "0.48" }
+              - column: { name: gerchikov_professional, valueNumeric: "0.62" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "0.95" }
+              - column: { name: gerchikov_master, valueNumeric: "0.52" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "0.42" }
+        # Кандидат 3: сильный C, профессионал
         - insert:
             tableName: candidates
             columns:
               - column: { name: full_name, value: "Морозов Павел" }
               - column: { name: role, value: "DevOps Engineer" }
-              - column: { name: disc_d, valueNumeric: "8.8" }
-              - column: { name: disc_i, valueNumeric: "6.5" }
-              - column: { name: disc_s, valueNumeric: "6.2" }
-              - column: { name: disc_c, valueNumeric: "8.9" }
-              - column: { name: gerchikov_instrumental, valueNumeric: "8.2" }
-              - column: { name: gerchikov_professional, valueNumeric: "9.0" }
-              - column: { name: gerchikov_patriotic, valueNumeric: "6.8" }
-              - column: { name: gerchikov_master, valueNumeric: "8.3" }
-              - column: { name: gerchikov_avoiding, valueNumeric: "2.5" }
+              - column: { name: disc_d, valueNumeric: "0.48" }
+              - column: { name: disc_i, valueNumeric: "0.18" }
+              - column: { name: disc_s, valueNumeric: "0.32" }
+              - column: { name: disc_c, valueNumeric: "0.89" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "0.72" }
+              - column: { name: gerchikov_professional, valueNumeric: "0.96" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "0.28" }
+              - column: { name: gerchikov_master, valueNumeric: "0.85" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "0.25" }
+        # Кандидат 4: сильный S, хозяин
         - insert:
             tableName: candidates
             columns:
               - column: { name: full_name, value: "Волкова Екатерина" }
               - column: { name: role, value: "QA Engineer" }
-              - column: { name: disc_d, valueNumeric: "7.0" }
-              - column: { name: disc_i, valueNumeric: "7.5" }
-              - column: { name: disc_s, valueNumeric: "8.5" }
-              - column: { name: disc_c, valueNumeric: "9.2" }
-              - column: { name: gerchikov_instrumental, valueNumeric: "7.0" }
-              - column: { name: gerchikov_professional, valueNumeric: "8.0" }
-              - column: { name: gerchikov_patriotic, valueNumeric: "7.5" }
-              - column: { name: gerchikov_master, valueNumeric: "6.9" }
-              - column: { name: gerchikov_avoiding, valueNumeric: "3.9" }
+              - column: { name: disc_d, valueNumeric: "0.22" }
+              - column: { name: disc_i, valueNumeric: "0.38" }
+              - column: { name: disc_s, valueNumeric: "0.85" }
+              - column: { name: disc_c, valueNumeric: "0.68" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "0.58" }
+              - column: { name: gerchikov_professional, valueNumeric: "0.72" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "0.65" }
+              - column: { name: gerchikov_master, valueNumeric: "0.92" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "0.35" }
+        # Кандидат 5: сбалансированный, высокий избегающий
         - insert:
             tableName: candidates
             columns:
               - column: { name: full_name, value: "Лебедев Максим" }
               - column: { name: role, value: "ML Engineer" }
-              - column: { name: disc_d, valueNumeric: "8.2" }
-              - column: { name: disc_i, valueNumeric: "7.8" }
-              - column: { name: disc_s, valueNumeric: "6.5" }
-              - column: { name: disc_c, valueNumeric: "8.7" }
-              - column: { name: gerchikov_instrumental, valueNumeric: "8.5" }
-              - column: { name: gerchikov_professional, valueNumeric: "9.2" }
-              - column: { name: gerchikov_patriotic, valueNumeric: "7.3" }
-              - column: { name: gerchikov_master, valueNumeric: "8.8" }
-              - column: { name: gerchikov_avoiding, valueNumeric: "2.9" }
+              - column: { name: disc_d, valueNumeric: "0.52" }
+              - column: { name: disc_i, valueNumeric: "0.48" }
+              - column: { name: disc_s, valueNumeric: "0.55" }
+              - column: { name: disc_c, valueNumeric: "0.58" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "0.62" }
+              - column: { name: gerchikov_professional, valueNumeric: "0.75" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "0.58" }
+              - column: { name: gerchikov_master, valueNumeric: "0.68" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "0.92" }
+        # Кандидат 6: очень сильный D, хозяин
+        - insert:
+            tableName: candidates
+            columns:
+              - column: { name: full_name, value: "Соколов Игорь" }
+              - column: { name: role, value: "Team Lead" }
+              - column: { name: disc_d, valueNumeric: "0.95" }
+              - column: { name: disc_i, valueNumeric: "0.55" }
+              - column: { name: disc_s, valueNumeric: "0.15" }
+              - column: { name: disc_c, valueNumeric: "0.48" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "0.85" }
+              - column: { name: gerchikov_professional, valueNumeric: "0.65" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "0.42" }
+              - column: { name: gerchikov_master, valueNumeric: "0.95" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "0.12" }
+        # Кандидат 7: мягкий S, патриот
+        - insert:
+            tableName: candidates
+            columns:
+              - column: { name: full_name, value: "Павлова Ольга" }
+              - column: { name: role, value: "HR Manager" }
+              - column: { name: disc_d, valueNumeric: "0.15" }
+              - column: { name: disc_i, valueNumeric: "0.78" }
+              - column: { name: disc_s, valueNumeric: "0.92" }
+              - column: { name: disc_c, valueNumeric: "0.42" }
+              - column: { name: gerchikov_instrumental, valueNumeric: "0.42" }
+              - column: { name: gerchikov_professional, valueNumeric: "0.58" }
+              - column: { name: gerchikov_patriotic, valueNumeric: "0.98" }
+              - column: { name: gerchikov_master, valueNumeric: "0.45" }
+              - column: { name: gerchikov_avoiding, valueNumeric: "0.55" }
